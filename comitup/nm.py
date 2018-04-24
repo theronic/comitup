@@ -87,6 +87,13 @@ def get_device_path(device):
     return device.SpecificDevice().object_path
 
 
+def get_ap_path(device, ssid):
+    aplist = device.SpecificDevice().GetAllAccessPoints()
+    aplist = [x for x in aplist if x.Ssid == ssid]
+    aplist = sorted(aplist, key=lambda x: x.Frequency)
+
+    return aplist[0].object_path
+
 def disconnect(device):
     try:
         device.Disconnect()
@@ -136,8 +143,11 @@ def del_connection_by_ssid(name):
             connection.Delete()
 
 
-def activate_connection_by_ssid(ssid, device, path='/'):
+def activate_connection_by_ssid(ssid, device, path=None):
     connection = get_connection_by_ssid(ssid)
+
+    if path == None:
+        path = get_ap_path(device, ssid)
 
     nm.NetworkManager.ActivateConnection(connection, device, path)
 
