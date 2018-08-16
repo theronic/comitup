@@ -18,26 +18,12 @@ from comitup import nm
 
 start_cmds = [
     # HOTSPOT rules
-    "iptables -w -N COMITUP-OUT",
-    "iptables -w -A COMITUP-OUT "
-      "-p icmp --icmp-type destination-unreachable -j DROP",  # noqa
-    "iptables -w -A COMITUP-OUT "
-      "-p icmp --icmp-type port-unreachable -j DROP",  # noqa
-    "iptables -w -A COMITUP-OUT -j RETURN",
-    "iptables -w -I OUTPUT -o {ap} -j COMITUP-OUT",
+    "iptables -w -A PREROUTING -p tcp --dport 80 -j DNAT --to-destination 10.42.0.1",
 ]
 
 end_cmds = [
     # Clear HOTSPOT rules
-    "iptables -w -D OUTPUT -o {ap} -j COMITUP-OUT >/dev/null 2>&1",
-    "iptables -w -D COMITUP-OUT "
-        "-p icmp --icmp-type destination-unreachable "        # noqa
-        "-j DROP >/dev/null 2>&1",                            # noqa
-    "iptables -w -D COMITUP-OUT "
-        "-p icmp --icmp-type port-unreachable "        # noqa
-        "-j DROP >/dev/null 2>&1",                            # noqa
-    "iptables -w -D COMITUP-OUT -j RETURN >/dev/null 2>&1",
-    "iptables -w -X COMITUP-OUT >/dev/null 2>&1",
+    "iptables -w -D PREROUTING -p tcp --dport 80 -j DNAT --to-destination 10.42.0.1",
 ]
 
 appliance_cmds = [
