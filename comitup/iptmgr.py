@@ -18,12 +18,18 @@ from comitup import nm
 
 start_cmds = [
     # HOTSPOT rules
-    "iptables -w -A PREROUTING -p tcp --dport 80 -j DNAT --to-destination 10.42.0.1",
+    "iptables -w -t nat -A PREROUTING -p tcp --dport 80 -j DNAT --to-destination 10.42.0.1",
+
+    "iptables -w -t nat -A PREROUTING -p udp -m udp --dport 53 -j DNAT --to-destination :1553",
+    "iptables -w -t nat -A POSTROUTING -p udp -m udp --sport 1553 -j SNAT --to-source :53",
 ]
 
 end_cmds = [
     # Clear HOTSPOT rules
-    "iptables -w -D PREROUTING -p tcp --dport 80 -j DNAT --to-destination 10.42.0.1",
+    "iptables -w -t nat -D PREROUTING -p tcp -m tcp --dport 80 -j DNAT --to-destination 10.42.0.1",
+
+    "iptables -w -t nat -D PREROUTING -p udp -m udp --dport 53 -j DNAT --to-destination :1553",
+    "iptables -w -t nat -D POSTROUTING -p udp -m udp --sport 1553 -j SNAT --to-source :53",
 ]
 
 appliance_cmds = [
