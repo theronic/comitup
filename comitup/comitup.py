@@ -10,6 +10,7 @@ import logging
 from logging.handlers import TimedRotatingFileHandler
 from comitup import persist
 from comitup import config
+from comitup import dnsd
 import random
 import argparse
 import sys
@@ -104,8 +105,13 @@ def main():
     iptmgr.init_iptmgr()
 
     statemgr.init_state_mgr(
-                conf, data,
-                [webmgr.state_callback, iptmgr.state_callback],
+                conf,
+                data,
+                [
+                    webmgr.state_callback,
+                    iptmgr.state_callback,
+                    dnsd.state_callback,
+                ],
              )
 
     loop = MainLoop()
